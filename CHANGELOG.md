@@ -2,7 +2,7 @@
 
 ### Added
 - **Bot Fight Mode (BFM) bypass support**: New `disable_bot_fight_mode` input option to temporarily disable Super Bot Fight Mode / Bot Fight Mode during workflow execution
-- New `bfm_propagation_delay` input to configure wait time for BFM settings to propagate (default: 5 seconds)
+- New `bfm_propagation_delay` input to configure wait time for BFM settings to propagate (default: 10 seconds)
 - Automatic restoration of original BFM state after job completion (success or failure)
 
 ### Why this matters
