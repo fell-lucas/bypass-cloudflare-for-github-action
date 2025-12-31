@@ -290,7 +290,7 @@ runs:
           echo "Operation ID: $operation_id"
         fi
         echo "List $list_id now contains only $ip"
-    - name: Cleanup and Restore Settings
+    - name: Clear List
       uses: gacts/run-and-post-run@v1
       with:
         post: |
@@ -301,18 +301,17 @@ runs:
             --header 'Content-Type: application/json' \
             --header "Authorization: Bearer ${{ inputs.cf_api_token }}" \
             --data '[]' \
-            || echo "Warning: Failed to clear IP list"
-
-          if [ "${{ env.bfm_was_disabled }}" = "true" ]; then
-            echo "Restoring Bot Fight Mode to original state..."
-            fight_mode="${{ env.bfm_original_fight_mode }}"
-            enable_js="${{ env.bfm_original_enable_js }}"
-            response=$(curl --silent --show-error --write-out '\n%{http_code}' --request PUT --url "https://api.cloudflare.com/client/v4/zones/${{ inputs.cf_zone_id }}/bot_management" --header 'Content-Type: application/json' --header "Authorization: Bearer ${{ inputs.cf_api_token }}" --data "{\"fight_mode\":$fight_mode,\"enable_js\":$enable_js}")
-            http_code=$(echo "$response" | tail -n1)
-            body=$(echo "$response" | sed '$d')
-            if [ "$http_code" = "200" ]; then
-              echo "Bot Fight Mode restored: fight_mode=$fight_mode, enable_js=$enable_js"
-            else
-              echo "Warning: Failed to restore Bot Fight Mode. HTTP code: $http_code, Response: $body"
-            fi
-          fi
+            || exit 1
+    - name: Restore Bot Fight Mode
+      uses: gacts/run-and-post-run@v1
+      if: inputs.disable_bot_fight_mode == 'true'
+      with:
+        post: |
+          echo "Restoring Bot Fight Mode to original state..."
+          curl --request PUT \
+            --url "https://api.cloudflare.com/client/v4/zones/${{ inputs.cf_zone_id }}/bot_management" \
+            --header 'Content-Type: application/json' \
+            --header "Authorization: Bearer ${{ inputs.cf_api_token }}" \
+            --data '{"fight_mode":${{ env.bfm_original_fight_mode }},"enable_js":${{ env.bfm_original_enable_js }}}' \
+            && echo "Bot Fight Mode restored successfully" \
+            || echo "Warning: Failed to restore Bot Fight Mode"
