@@ -25,7 +25,7 @@ This action automatically manages IP whitelisting by creating a Cloudflare custo
 | `cf_zone_id`             | Cloudflare Zone ID                                                                               | true     |         |
 | `cf_api_token`           | Cloudflare API Token                                                                             | true     |         |
 | `disable_bot_fight_mode` | Disable Bot Fight Mode during workflow execution (requires Zone Settings > Edit permission)      | false    | `false` |
-| `bfm_propagation_delay`  | Seconds to wait after disabling Bot Fight Mode for settings to propagate                         | false    | `5`     |
+| `bfm_propagation_delay`  | Seconds to wait after disabling Bot Fight Mode for settings to propagate                         | false    | `10`     |
 
 ## Usage
 To use this action, create a workflow in your repository's `.github/workflows` directory. Below is an example workflow file:
